@@ -82,23 +82,37 @@ tendencia = sim
         self.iq_bot.stop_candles_stream(ativo, timeframe)
         return candles
 
-    def lista_ativos_online(self):
+    def lista_ativos_online(self, check):
         ativos = self.iq_bot.get_all_open_time()
-        return {'digital': ativos['digital'], 'binario': ativos['turbo']}
+        if ativos['digital'][check]:
+            return True
+        else:
+            return False
 
-    def compra_digital(self, valor, ativo, tempo):
+    def compra_binary(self, valor, ativo, tempo):
+        tempo = int(tempo)
         check, id = self.iq_bot.buy(valor, ativo, 'call', tempo)
         if check:
             print(
-                f"Comprado em {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}, expiracao {tempo}")
+                f"Comprado em {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}, expiracao em {tempo} minutos")
         else:
             print(
-                f"Falha na compra do {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}")
+                f"Falha na entrada de compra do {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}")
+
+    def venda_binary(self, valor, ativo, tempo):
+        tempo = int(tempo)
+        check, id = self.iq_bot.buy(valor, ativo, 'put', tempo)
+        if check:
+            print(
+                f"Vendido em {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}, expiracao em {tempo} minutos")
+        else:
+            print(
+                f"Falha na entrada de venda do {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}")
 
 
 if __name__ == "__main__":
     bot = Bot()
     b = bot.arquivo('dados.txt')
     if b and bot.check_arquivo(b) and bot.conectar(b['email'], b['senha']):
-        print(bot.lista_candle(b['ativo'], b['timeframe']))
-        print(bot.lista_ativos_online())
+        if bot.lista_ativos_online(b['ativo']):
+            bot.compra_binary(2, b['ativo'], b['timeframe'])
