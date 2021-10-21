@@ -1,4 +1,4 @@
-from time import process_time, time
+from time import time
 from iqoptionapi.stable_api import IQ_Option
 import configparser
 import telebot
