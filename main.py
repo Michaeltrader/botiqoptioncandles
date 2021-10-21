@@ -3,6 +3,7 @@ from iqoptionapi.stable_api import IQ_Option
 import configparser
 import telebot
 from pathlib import Path
+from datetime import datetime
 
 
 class Bot():
@@ -79,11 +80,25 @@ tendencia = sim
         self.iq_bot.start_candles_stream(ativo, timeframe, 100)
         candles = self.iq_bot.get_realtime_candles(ativo, timeframe)
         self.iq_bot.stop_candles_stream(ativo, timeframe)
+        return candles
+
+    def lista_ativos_online(self):
+        ativos = self.iq_bot.get_all_open_time()
+        return {'digital': ativos['digital'], 'binario': ativos['turbo']}
+
+    def compra_digital(self, valor, ativo, tempo):
+        check, id = self.iq_bot.buy(valor, ativo, 'call', tempo)
+        if check:
+            print(
+                f"Comprado em {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}, expiracao {tempo}")
+        else:
+            print(
+                f"Falha na compra do {ativo} as {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}")
 
 
 if __name__ == "__main__":
     bot = Bot()
     b = bot.arquivo('dados.txt')
-    print(b['timeframe'])
     if b and bot.check_arquivo(b) and bot.conectar(b['email'], b['senha']):
         print(bot.lista_candle(b['ativo'], b['timeframe']))
+        print(bot.lista_ativos_online())
