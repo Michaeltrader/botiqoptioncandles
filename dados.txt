@@ -6,7 +6,7 @@ senha = 90576edkf
 stop_win = 100.50
 stop_loss = 10.00
 gale = 2
-ativo = EURUSD
+ativo = EURUSD-OTC,AUDCAD-OTC
 timeframe = 1
 
 [TELEGRAM]
